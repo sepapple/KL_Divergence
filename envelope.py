@@ -14,6 +14,18 @@ def KLdivergence(p,q):
     KL=np.sum([p * np.log(p/q) for p,q in zip(p,q)])   
     return KL
 
+def JSdivergence(p,q,dx):
+    #print(p)
+    #print(q)
+    #print(p+q)
+    pq2 = (p + q) / 2
+    #print(pq2)
+    kl1 =  KLdivergence(p ,pq2 ,dx)
+    kl2 =  KLdivergence(q ,pq2 ,dx)
+    #print(kl1, kl2)
+    JS = (kl1 / 2) + (kl2 / 2)
+    return JS
+
 # def Pearson(p,q):
 #     KL=np.sum([b*((a/b-1)**2) for a,b in zip(p,q)])   
 #     return KL
