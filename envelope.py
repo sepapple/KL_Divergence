@@ -10,10 +10,13 @@ import datetime as dt
 import matplotlib
 import matplotlib.pyplot as plt
 
-# KL divergence
-def KLdivergence(p,q,dx):
-    KL=np.sum(p * np.log(p/q)) * dx
+def KLdivergence(p,q):
+    KL=np.sum([p * np.log(p/q) for p,q in zip(p,q)])   
     return KL
+
+# def Pearson(p,q):
+#     KL=np.sum([b*((a/b-1)**2) for a,b in zip(p,q)])   
+#     return KL
 
 def main():
     args = et.utils.ExampleArgumentParser().parse_args()
@@ -48,6 +51,9 @@ def main():
     #KLダイバージェンス設定
     dx = 0.001 
     
+    #移動平均の個数
+    num = 20
+    b = np.ones(num)/num
     #事前に保存しておいたcsvファイル読み込み
     # df1 = pd.read_csv("test.csv",usecols=[1])
     df1 = np.loadtxt('test.csv')
@@ -61,20 +67,22 @@ def main():
 
 
     # np.savetxt('test.csv',df2)
+    # exit(1)
     # df2 = pd.DataFrame(get_data,columns=['sensor_data'])
     # df2.to_csv('test.csv')
-    # exit(1)
-
-    KL_U2  = KLdivergence(df1,df2,dx)
-    # print(df1)
-    # print(df2)
+    # df1 = np.delete(df1,np.s_[:300])
+    # df2 = np.delete(df2,np.s_[:300])
+    print(b)
+    df1 = np.convolve(df1,b, mode = 'same')
+    df2 = np.convolve(df2,b, mode = 'same')
+    KL_U2  = KLdivergence(df1,df2)
+    # KL_U2  = Pearson(df1,df2)
 
 # デフォルトの色
     clr=plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 #第一引数から第二引数までの範囲で第三引数刻みで数字の配列を作成
     x = np.arange(0,5000+0.25,0.25)
-
 
 # p(x)
     ax = plt.subplot(1,2,1)
