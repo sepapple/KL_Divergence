@@ -81,7 +81,7 @@ def main():
     #事前に保存しておいたcsvファイル読み込み
     # df1 = pd.read_csv("test.csv",usecols=[1])
     df1 = np.loadtxt('test.csv')
-    df2 = np.empty(len(df1))
+    df2 = np.zeros(len(df1))
 
     interrupt_handler = et.utils.ExampleInterruptHandler()
     print("Press Ctrl-C to end session")
@@ -109,7 +109,8 @@ def main():
     # df2 = (df2-df2.min())/(df2.max() - df2.min())
     # df2[np.argmin(df2)] = df2[np.argmin(df2)] + 0.00001
     # df1[np.argmin(df1)] = df1[np.argmin(df1)] + 0.00001
-
+    
+    #データ保存部分
     # np.savetxt('test.csv',df2)
     # exit(1)
     # df2 = pd.DataFrame(get_data,columns=['sensor_data'])
