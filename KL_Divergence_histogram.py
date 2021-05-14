@@ -95,6 +95,8 @@ def main():
 
     while not interrupt_handler.got_signal:
         data_info, data = client.get_next()
+        print(data)
+        exit(1)
         if(counter == 0):
             df2 = np.delete(data[0],np.s_[-7::])
             temp.append(df2)
@@ -119,13 +121,13 @@ def main():
         # print("number of sensor data: "+str(len(data[0])))
     
     temp = np.array(temp)
-    print(temp)
-    print(len(temp))
-    print(type(temp))
+    # print(temp)
+    # print(len(temp))
+    # print(type(temp))
     exit(0)
     #合計が1になるように計算
-    df2 = df2/np.sum(df2)
-    print(np.sum(df2))
+    # df2 = df2/np.sum(df2)
+    # print(np.sum(df2))
     
     #正規化
     # df2 = (df2-df2.min())/(df2.max() - df2.min())
