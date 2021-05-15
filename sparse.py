@@ -114,9 +114,9 @@ def main():
         now_getData.append(show_data)
         # ヒストグラムの作成と表示
         # hist, bins = np.histogram(show_data,density=True)
-        plt.plot(range(1,sample+1),show_data)  
+        plt.plot(range(1,sample+1),show_data,color = "tomato")  
         plt.subplot(math.ceil(num/2),4,i*2+2)
-        plt.hist(show_data,bins=10,density=True)
+        plt.hist(show_data,bins=10,density=True,color = "aqua")
         plt.title(str(range_start*100+i*6)+"cm") 
         # print("ヒストグラムの度数"+str(hist[0]))
         # print("階級を区切る値"+str(hist[1]))
@@ -134,12 +134,18 @@ def main():
     for i in zip(prev_getData,now_getData):
         plt.subplot(math.ceil(num/2),4,roop_count*2+1)
         plt.title(str(range_start*100+roop_count*6)+"cm(Previous)") 
-        now_hist = plt.hist(i[0],bins=10)
+        now_hist = plt.hist(i[0],bins=10,color = "lime")
+        now_hist = list(now_hist)
         now_hist = normalization(np.array(now_hist[0]))
+        # print(now_hist)
+        # now_hist_normalization = normalization(np.array(now_hist[0]))
+        # now_hist[0] = now_hist_normalization
+        # plt.hist(now_hist)
+        # print(now_hist)
 
         plt.subplot(math.ceil(num/2),4,roop_count*2+2)
         plt.title(str(range_start*100+roop_count*6)+"cm(Now)") 
-        prev_hist = plt.hist(i[1],bins=10)
+        prev_hist = plt.hist(i[1],bins=10,color = "deepskyblue")
         prev_hist = normalization(np.array(prev_hist[0]))
         # print("now_histの要素の数: "+str(len(now_hist[0])))
         # print("prev_histの要素の数: "+str(len(now_hist[0])))
