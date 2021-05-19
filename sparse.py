@@ -22,6 +22,14 @@ def KLdivergence(p,q):
     KL=(np.sum([b * np.log(a/b) for a,b in zip(p,q)]))*(-1)
     return KL
 
+def JSdivergence(p,q):
+    pq2 = (p + q) / 2
+    print(pq2)
+    kl1 =  KLdivergence(p ,pq2)
+    kl2 =  KLdivergence(q ,pq2)
+    JS = (kl1 / 2) + (kl2 / 2)
+    return JS
+
 def main():
     args = utils.ExampleArgumentParser().parse_args()
     utils.config_logging(args)
@@ -80,29 +88,80 @@ def main():
         if(counter >= sample):
             break
 
-
     #300個のフレームから距離ごとに平均を取得
-    result = np.zeros(len(storage[0]))
-    for data in storage:
-        result = result + data
-    result = result/len(storage)
-    # print(storage)
-    # print(result)
+    # result = np.zeros(len(storage[0]))
+    # for data in storage:
+    #     result = result + data
+    # result = result/len(storage)
 
 
     # clr=plt.rcParams['axes.prop_cycle'].by_key()['color']
+
+    roop_count = 0
+    prev_getData = np.loadtxt('sparse.csv')
     
-    #フレーム内のスイープの平均の遷移の表示   
-    # for i in range(num):
-    #     show_data = []
-    #     plt.subplot(math.ceil(num/2),2,i+1)
-    #     plt.title(str(range_start*100+i*6)+"cm") 
-    #     for j in range(len(storage)):
-    #         show_data.append(storage[j][i])
-    #     plt.plot(range(1,sample+1),show_data)  
+    #生データ300個のフレームの平均を表示   
+    show_raw_data = np.zeros(int(num))
+    for frame in storage:
+        show_raw_data += frame    
+    show_curr_RawData = show_raw_data/sample
     
-    now_getData = []
+    ##保存していたデータの生データ300個のフレームの平均
+    show_prev_RawData = []
+    for data in prev_getData:
+        show_prev_RawData.append(np.sum(data)/sample)
+
+    x = np.arange(range_start*100,range_end*100+1,6)
+    plt.subplot(1,3,1)
+    plt.plot(x,show_curr_RawData,color='r')  
+    plt.title("Raw Data(Current)") 
+    plt.subplot(1,3,2)
+    plt.plot(x,show_prev_RawData,color='b')  
+    plt.title("Raw Data(Previous)") 
+    plt.subplot(1,3,3)
+    plt.title("Raw Data(Combination)") 
+    plt.plot(x,show_curr_RawData,color='r')  
+    plt.plot(x,show_prev_RawData,color='b')  
+    # plt.tight_layout()
+    # plt.show()
+    # exit(1)
+    
+
+    #データを別々に表示
+    for i in range(num):
+        show_data = []
+        plt.subplot(math.ceil(num/2),4,roop_count*2+1)
+        plt.title(str(range_start*100+i*6)+"cm(Current)") 
+        for j in range(len(storage)):
+            show_data.append(storage[j][i])
+        plt.plot(range(1,sample+1),show_data,color='r')  
+
+        plt.subplot(math.ceil(num/2),4,roop_count*2+2)
+        plt.title(str(range_start*100+i*6)+"cm(Previous)") 
+        plt.plot(range(1,sample+1),prev_getData[i],color='b')
+        roop_count += 1
+
+    # plt.tight_layout()
+    # plt.show()
+
+    #データをあわせて表示
+    for i in range(num):
+        show_data = []
+        plt.subplot(math.ceil(num/2),2,i+1)
+        for j in range(len(storage)):
+            show_data.append(storage[j][i])
+        plt.plot(range(1,sample+1),show_data,color='r',label="Current Data")  
+        plt.title(str(range_start*100+i*6)+"cm(Combination)") 
+        plt.plot(range(1,sample+1),prev_getData[i],color='b',label="Previous Data")
+        plt.xlabel("frame")
+        plt.ylabel("amptitude")
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0,fontsize='small')
+
+    # plt.tight_layout()
+    # plt.show()
+
     #ある距離の時系列データの遷移とそのデータのヒストグラムの表示   
+    now_getData = []
     for i in range(num):
         show_data = []
         # plt.subplot(math.ceil(num/2),2,i+1)
@@ -121,13 +180,13 @@ def main():
         # print("ヒストグラムの度数"+str(hist[0]))
         # print("階級を区切る値"+str(hist[1]))
 
-    plt.tight_layout()
-    plt.show()
-    
-    #ndarray型に変換
-    now_getData = np.array(now_getData)
-    #データを保存
+    # plt.tight_layout()
+    # plt.show()
+
+    #ndarray型に変換し、保存
+    # now_getData = np.array(now_getData)
     # np.savetxt('sparse.csv',now_getData)
+
     roop_count = 0
     prev_getData = np.loadtxt('sparse.csv')
     #ヒストグラムの度数からKLを算出
@@ -149,12 +208,16 @@ def main():
         prev_hist = normalization(np.array(prev_hist[0]))
         # print("now_histの要素の数: "+str(len(now_hist[0])))
         # print("prev_histの要素の数: "+str(len(now_hist[0])))
-        value = KLdivergence(now_hist,prev_hist)
-        print(str(range_start*100+roop_count*6)+"cm時のKL_Divergence: "+str(value))
+        # value = KLdivergence(now_hist,prev_hist)
+        # print(str(range_start*100+roop_count*6)+"cm時のKL_Divergence: "+str(value))
+        JS_value = JSdivergence(now_hist,prev_hist)
+        print(JS_value)
+        exit(1)
+        print(str(range_start*100+i*6)+"cm時のJS_Divergence: "+str(JS_value))
         roop_count += 1
-                
-    plt.tight_layout()
-    plt.show()
+    
+    # plt.tight_layout()
+    # plt.show()
 
     
     # p(x)
