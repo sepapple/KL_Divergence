@@ -15,6 +15,7 @@ def normalization(x):
     x_sum = np.sum(x)
     return x/x_sum
 
+#qに対するpのKLダイバージェンス
 def KLdivergence(p,q):
     # print(p)
     # print(q)
@@ -25,7 +26,6 @@ def KLdivergence(p,q):
     prev_zero_location = q==0
     for i in zip(now_zero_location,prev_zero_location):
         if(i[0] == True or i[1] == True):
-            # print("\n0を発見しました隊長！\n")
             p = np.delete(p,counter)
             q = np.delete(q,counter)
         counter += 1
@@ -35,8 +35,8 @@ def KLdivergence(p,q):
 
 def JSdivergence(p,q):
     pq2 = (p + q) / 2
-    kl1 =  KLdivergence(p ,pq2)
-    kl2 =  KLdivergence(q ,pq2)
+    kl1 =  KLdivergence(pq2,p)
+    kl2 =  KLdivergence(pq2,q)
     JS = (kl1 / 2) + (kl2 / 2)
     return JS
 
@@ -246,10 +246,14 @@ def main():
         JS_strage.append(JS_value)
         roop_count += 1
     
-    
     plt.tight_layout()
     plt.show()
+
+    #KL,JSの平均値
+    print("KL_Divergenceの平均値: "+str(np.sum(np.array(KL_strage))/num)+"\n")
+    print("JS_Divergenceの平均値: "+str(np.sum(np.array(JS_strage))/num)+"\n")
     
+    #KLとJSを可視化
     X = list(range(int(range_start*100),int(range_end*100+1),6))
     plt.subplot(1,3,1)
     # plt.plot(range(len(KL_strage)),KL_strage,color='r',marker="o")  
