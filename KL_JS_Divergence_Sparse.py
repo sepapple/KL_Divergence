@@ -29,8 +29,12 @@ def KLdivergence(p,q):
             p = np.delete(p,counter)
             q = np.delete(q,counter)
         counter += 1
+    try:
+        KL=(np.sum([b * np.log(a/b) for a,b in zip(p,q)]))*(-1)
+    except ZeroDivisionError:
+        print(p)
+        print(q)
 
-    KL=(np.sum([b * np.log(a/b) for a,b in zip(p,q)]))*(-1)
     return KL
 
 def JSdivergence(p,q):
@@ -125,22 +129,22 @@ def main():
     plt.subplot(1,3,1)
     plt.plot(x,show_curr_RawData,color='r')  
     plt.title("Raw Data(Current)") 
-    plt.xlabel("Frame")
+    plt.xlabel("Distance(cm)")
     plt.ylabel("Amptitude")
     plt.subplot(1,3,2)
     plt.plot(x,show_prev_RawData,color='b')  
     plt.title("Raw Data(Previous)") 
-    plt.xlabel("Frame")
+    plt.xlabel("Distance(cm)")
     plt.ylabel("Amptitude")
     plt.subplot(1,3,3)
-    plt.title("Raw Data(Combination)") 
+    plt.title("Raw Data(Compare)") 
     plt.plot(x,show_curr_RawData,color='r')  
     plt.plot(x,show_prev_RawData,color='b')  
-    plt.xlabel("Quantity")
+    plt.xlabel("Distance")
     plt.ylabel("Amptitude")
     
-    plt.tight_layout()
-    plt.show()
+    # plt.tight_layout()
+    # plt.show()
     # exit(1)
     
 
@@ -162,8 +166,8 @@ def main():
         plt.ylabel("Amptitude")
         roop_count += 1
 
-    plt.tight_layout()
-    plt.show()
+    # plt.tight_layout()
+    # plt.show()
 
     #データをあわせて表示
     for i in range(num):
@@ -178,8 +182,8 @@ def main():
         plt.ylabel("Amptitude")
         plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0,fontsize='small')
 
-    plt.tight_layout()
-    plt.show()
+    # plt.tight_layout()
+    # plt.show()
 
     #ある距離の時系列データの遷移とそのデータのヒストグラムの表示   
     now_getData = []
@@ -205,17 +209,18 @@ def main():
         # print("ヒストグラムの度数"+str(hist[0]))
         # print("階級を区切る値"+str(hist[1]))
 
-    plt.tight_layout()
-    plt.show()
+    # plt.tight_layout()
+    # plt.show()
 
     #ndarray型に変換し、保存
     # now_getData = np.array(now_getData)
     # np.savetxt('sparse.csv',now_getData)
+    # exit(1)
 
     roop_count = 0
     prev_getData = np.loadtxt('sparse.csv')
-    KL_strage = []
-    JS_strage = []
+    KL_storage = []
+    JS_storage = []
 
     #ヒストグラムの度数からKLを算出
     for i in zip(prev_getData,now_getData):
@@ -242,43 +247,72 @@ def main():
         print(str(range_start*100+roop_count*6)+"cm時のKL_Divergence: "+str(KL_value))
         JS_value = JSdivergence(now_hist,prev_hist)
         print(str(range_start*100+roop_count*6)+"cm時のJS_Divergence: "+str(JS_value)+"\n")
-        KL_strage.append(KL_value)
-        JS_strage.append(JS_value)
+        KL_storage.append(KL_value)
+        JS_storage.append(JS_value)
         roop_count += 1
     
-    plt.tight_layout()
-    plt.show()
+    # plt.tight_layout()
+    # plt.show()
+    
+    temp_KLlist = []
+    temp_store_KLlist = []
+    temp_JSlist = []
+    temp_store_JSlist = []
+    temp_KLlist.append(np.array(KL_storage))
+    temp_JSlist.append(np.array(JS_storage))
+    
+    #ファイルからデータを読みこむ
+    store_KLarr = np.loadtxt("KLDivergence_Sparse.csv",delimiter = ",")
+    store_JSarr = np.loadtxt("JSDivergence_Sparse.csv",delimiter = ",")
+    temp_store_KLlist.append(store_KLarr)
+    temp_store_JSlist.append(store_JSarr)
+
+    #データを追加
+    store_KLarr = np.empty((0,num),int)
+    store_JSarr = np.empty((0,num),int)
+    for data in temp_store_KLlist:
+        store_KLarr = np.append(store_KLarr,np.array(data),axis=0)
+    # store_KLarr = np.append(store_KLarr,np.array(temp_store_KLlist),axis=0)
+    for data in temp_store_KLlist:
+        store_JSarr = np.append(store_JSarr,np.array(data),axis=0)
+        # store_JSarr = np.append(store_JSarr,np.array(temp_store_JSlist),axis=0)
+    store_KL = np.append(store_KLarr,np.array(temp_KLlist),axis=0)
+    store_JS = np.append(store_JSarr,np.array(temp_JSlist),axis=0)
+
+    #ファイルを保存
+    store_KL = np.savetxt("KLDivergence_Sparse.csv",store_KL,delimiter=",")
+    store_JS = np.savetxt("JSDivergence_Sparse.csv",store_JS,delimiter=",")
 
     #KL,JSの平均値
-    print("KL_Divergenceの平均値: "+str(np.sum(np.array(KL_strage))/num)+"\n")
-    print("JS_Divergenceの平均値: "+str(np.sum(np.array(JS_strage))/num)+"\n")
+    # print("KL_Divergenceの平均値: "+str(np.sum(np.array(KL_storage))/num)+"\n")
+    # print("JS_Divergenceの平均値: "+str(np.sum(np.array(JS_storage))/num)+"\n")
     
     #KLとJSを可視化
     X = list(range(int(range_start*100),int(range_end*100+1),6))
     plt.subplot(1,3,1)
-    # plt.plot(range(len(KL_strage)),KL_strage,color='r',marker="o")  
-    plt.plot(X,KL_strage,color='r',marker="o")  
+    # plt.plot(range(len(KL_storage)),KL_storage,color='r',marker="o")  
+    plt.plot(X,KL_storage,color='r',marker="o")  
     plt.title("KL Divergence") 
     plt.xlabel("Distance") 
     plt.ylabel("Amptitude") 
 
     plt.subplot(1,3,2)
-    plt.plot(X,JS_strage,color='b',marker="o")  
+    plt.plot(X,JS_storage,color='b',marker="o")  
     plt.title("JS Divergence") 
     plt.xlabel("Distance") 
     plt.ylabel("Amptitude") 
 
     plt.subplot(1,3,3)
-    plt.plot(X,KL_strage,color='r',marker="o")  
-    plt.plot(X,JS_strage,color='b',marker="o")  
+    plt.plot(X,KL_storage,color='r',marker="o")  
+    plt.plot(X,JS_storage,color='b',marker="o")  
     # plt.plot(X,KL_strage,color='r',marker="o",linewidth=0)  
     # plt.plot(X,JS_strage,color='b',marker="o",linewidth=0)  
     plt.title("Compare") 
     plt.xlabel("Distance") 
     plt.ylabel("Amptitude") 
     
-    plt.tight_layout()
-    plt.show()
+    # plt.tight_layout()
+    # plt.show()
 
     print("Disconnecting...")
     client.disconnect()
