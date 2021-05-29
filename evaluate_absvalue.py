@@ -7,6 +7,7 @@ import numpy as np
 import datetime
 import time
 import math
+import csv
 
 #描画
 import matplotlib
@@ -63,52 +64,83 @@ def main():
     #KLダイバージェンス設定
     dx = 0.001 
     
-    #移動平均の個数
-    num = 500
+    #取得するデータの個数
+    num = 10
 
     #取得するセンサデータの個数とカウンター
     sample = 500
     counter = 0
-    b = np.ones(num)/num
-    #事前に保存しておいたcsvファイル読み込み
-    # df1 = pd.read_csv("test.csv",usecols=[1])
+
     df1 = np.loadtxt('test.csv')
     df2 = np.zeros(len(df1))
+    b = np.ones(num)/num
 
-    interrupt_handler = et.utils.ExampleInterruptHandler()
-    print("Press Ctrl-C to end session")
-    start = time.time()
-    while not interrupt_handler.got_signal:
-        data_info, data = client.get_next()
-        if(counter == 0):
-            df2 = np.delete(data[0],np.s_[-7::])
-        else:
-            df2 = df2 + np.delete(data[0],np.s_[-7::])
-        counter += 1
-        if(counter > sample):
-            df2 = df2/sample
-            break
-        # print("sensor data: "+str(data[0]))
-        # print("number of sensor data: "+str(len(data[0])))
-    finish = time.time()
-    print("処理時間: " + str(finish-start))
-    
-    #前に取得したデータと現在取得したデータの処理
-    difference = abs(df1-df2) #振幅の差の絶対値を取得
-    abs_max = max(difference)
-    print(abs_max)
+    temp_ndarray = np.array([])
+    for i in range(num):
+        interrupt_handler = et.utils.ExampleInterruptHandler()
+        print("Press Ctrl-C to end session")
+        # start = time.time()
+        while not interrupt_handler.got_signal:
+            data_info, data = client.get_next()
+            if(counter == 0):
+                df2 = np.delete(data[0],np.s_[-7::])
+            else:
+                df2 = df2 + np.delete(data[0],np.s_[-7::])
+            counter += 1
+            if(counter > sample):
+                df2 = df2/sample
+                counter = 0
+                break
+            # print("sensor data: "+str(data[0]))
+            # print("number of sensor data: "+str(len(data[0])))
+        # finish = time.time()
+        
+        #前に取得したデータと現在取得したデータの処理
+        difference = abs(df1-df2) #振幅の差の絶対値を取得
+        abs_max = max(difference)
+        max_sequence = np.argmax(difference)
+        location = range_start*100+((int(range_end*100) - int(range_start*100))/len(df1))*max_sequence
+        print(location)
+        exit(1)
 
+        temp_ndarray = np.append(temp_ndarray,abs_max)
+        # print(temp_ndarray)
+        # temp_list = list(temp_ndarray)
+        # temp_list.append()
+        # temp_list = np.array(temp_list)
+        # print(temp_list)
+        # np.savetxt('absvalue_samevalue.csv',temp_ndarray,delimiter=',')
     temp_list = []
-    temp_ndarray = np.loadtxt('absvalue_samevalue.csv',delimiter=',')
-    temp_ndarray = np.append(temp_ndarray,abs_max)
     temp_list.append(temp_ndarray)
-    print(temp_ndarray)
-    # temp_list = list(temp_ndarray)
-    # temp_list.append()
-    # temp_list = np.array(temp_list)
-    # print(temp_list)
-    # np.savetxt('absvalue_samevalue.csv',temp_ndarray,delimiter=',')
-    np.savetxt('absvalue_samevalue.csv',np.array(temp_list),delimiter=',')
+    
+    #ファイルからデータを読みこむ
+    #csvファイルに値がないか、1行のときは動かない
+    #numの数は同じ数でなければならない
+    temp = []
+    temp_2dimensional_ndarray = []
+    # prev_ndarray = np.loadtxt('absvalue_samevalue.csv',delimiter=',')
+    prev_ndarray = np.loadtxt('absvalue_BookAgainstEmptyValue.csv',delimiter=',')
+    # prev_ndarray = np.loadtxt('KLDivergence_Sparse.csv',delimiter=",")
+    # temp.append(np.array(prev_ndarray))
+    # temp_2dimensional_ndarray.append(np.array(temp))
+    temp_2dimensional_ndarray.append(np.array(prev_ndarray))
+    store_data = np.empty((0,num),int)
+    # if(len(temp_2dimensional_ndarray)<= 1):
+    #     if(len(temp_2dimensional_ndarray)==0):
+    #         store_data = np.append(store_data,np.array(temp_list),axis=0)
+    #         np.savetxt('absvalue_BookAgainstEmptyValue.csv',np.array(store_data),delimiter=',')
+    #     else:
+    #         store_data = np.append(store_data,np.array(temp_2dimensional_ndarray),axis=0)
+    #         store_data = np.append(store_data,np.array(temp_list),axis=0)
+    #         np.savetxt('absvalue_BookAgainstEmptyValue.csv',np.array(store_data),delimiter=',')
+    # else:
+    # print(temp_2dimensional_ndarray)
+    for data in temp_2dimensional_ndarray:
+        store_data = np.append(store_data,np.array(data),axis=0)
+
+    store_data = np.append(store_data,np.array(temp_list),axis=0)
+    # np.savetxt('absvalue_samevalue.csv',np.array(store_data),delimiter=',')
+    np.savetxt('absvalue_BookAgainstEmptyValue.csv',np.array(store_data),delimiter=',')
     # difference = (df1-df2)**2 #振幅の差の二乗差を取得
     # print(difference)
     

@@ -271,6 +271,7 @@ def main():
     store_KLarr = np.empty((0,num),int)
     store_JSarr = np.empty((0,num),int)
     for data in temp_store_KLlist:
+        print(data)
         store_KLarr = np.append(store_KLarr,np.array(data),axis=0)
     # store_KLarr = np.append(store_KLarr,np.array(temp_store_KLlist),axis=0)
     for data in temp_store_KLlist:
