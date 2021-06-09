@@ -73,7 +73,7 @@ def main():
     #事前に保存しておいたcsvファイル読み込み
     # df1 = pd.read_csv("test.csv",usecols=[1])
     df1 = np.loadtxt('test.csv')
-    df2 = np.zeros(len(df1))
+    # df2 = np.zeros(len(df1))
 
     interrupt_handler = et.utils.ExampleInterruptHandler()
     print("Press Ctrl-C to end session")
@@ -81,9 +81,10 @@ def main():
     while not interrupt_handler.got_signal:
         data_info, data = client.get_next()
         if(counter == 0):
-            df2 = np.delete(data[0],np.s_[-7::])
+            # df2 = np.delete(data[0],np.s_[-7::])
+            df2 = data[0]
         else:
-            df2 = df2 + np.delete(data[0],np.s_[-7::])
+            df2 = df2 + data[0]
         counter += 1
         if(counter > sample):
             df2 = df2/sample
