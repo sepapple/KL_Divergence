@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import datetime
 import time
+import datetime
 import math
 
 #描画
@@ -55,7 +56,7 @@ def main():
     num = 500
 
     #取得するセンサデータの個数とカウンター
-    sample = 500
+    sample = 2000
     counter = 0
     b = np.ones(num)/num
     #事前に保存しておいたcsvファイル読み込み
@@ -78,7 +79,9 @@ def main():
 
     #データ保存部
     # np.savetxt('test.csv',df2)
-    # exit(1)
+    print(len(df1))
+    print((int(range_end*100) - int(range_start*100))/len(df1))
+    exit(1)
 
     # print(df2)
     # print(np.argmax(df2))
@@ -144,7 +147,8 @@ def main():
 
     #ピーク位置調整後
     # ax = plt.subplot(1,2,1)
-    ax = plt.subplot(1,1,1)
+    # ax = plt.subplot(1,3,1)
+    ax = plt.subplot(2,2,1)
 
     plt.plot(range(0,len(df1_copy)),df1_copy,label='Previous',color='b')  
     plt.plot(range(0,len(df2_copy)),df2_copy,label='Current',color='r')  
@@ -152,27 +156,63 @@ def main():
     plt.xlabel('Data Number')
     plt.ylabel('Amplitude')
     plt.title('After Adjustment of Peak Position')
-    plt.legend(loc=1)
+    plt.legend(loc='best')
 
     #ユークリッド距離,コサイン類似度の算出
     euclidean_distance = Euclidean_Distance(df1_copy,df2_copy)
     cosine_similarity = Cosine_Similarity(df1_copy,df2_copy)
-    print("ユークリッド距離: "+str(euclidean_distance))
-    print("コサイン類似度: "+str(cosine_similarity))
+    point_distance = np.sqrt((df1_copy-df2_copy)**2)
+    peak_point = np.argmax(df1_copy)
+
+    print("各点におけるユークリッド距離の総和: "+str(euclidean_distance))
+    # print("コサイン類似度: "+str(cosine_similarity))
+    print("ピーク地点におけるユークリッド距離: "+str(np.sqrt((df1_copy[peak_point]-df2_copy[peak_point])**2)))
+    # print("点ごとの距離: "+str(point_distance))
+
 
     # ax = plt.subplot(1,2,2)
-    # value = np.sqrt(np.square(df1_copy-df2_copy))
-    # 
-    # plt.plot(range(0,len(value)),value,label='Euclidean_Distance',color='r')  
-    # 
-    # plt.xlabel('Data Number')
-    # plt.ylabel('Amplitude')
-    # plt.title('Euclidean Distance')
-    # 
-    # plt.tight_layout()
-    # plt.legend(loc=1)
+    # ax = plt.subplot(1,3,2)
+    ax = plt.subplot(2,2,2)
+    value = np.sqrt(np.square(df1_copy-df2_copy))
+
+    plt.plot(range(0,len(value)),value,label='Euclidean_Distance',color='r')  
+
+    plt.xlabel('Data Number')
+    plt.ylabel('Euclidean Distance')
+    plt.title('Euclidean Distance')
     
-    plt.show()
+    df1_slope = []
+    df2_slope = []
+    for i in range(len(df1_copy)-1):
+        df1_slope.append(df1_copy[i+1]-df1_copy[i])
+        df2_slope.append(df2_copy[i+1]-df2_copy[i])
+
+    # ax = plt.subplot(1,3,3)
+    ax = plt.subplot(2,2,3)
+    plt.plot(range(0,len(df1_slope)),df1_slope,label='Previous',color='b')  
+    plt.plot(range(0,len(df2_slope)),df2_slope,label='Current',color='r')  
+
+    plt.xlabel('Data Number')
+    plt.ylabel('Slope')
+    plt.legend()
+    plt.title('Slope')
+
+    ax = plt.subplot(2,2,4)
+    slope_diff = np.sqrt(np.square(np.array(df1_slope)-np.array(df2_slope)))
+    plt.plot(range(0,len(slope_diff)),slope_diff,label='Previous',color='b')  
+    print("傾きの差のユークリッド距離: "+str(slope_diff[np.argmax(slope_diff)]))
+
+    plt.xlabel('Data Number')
+    plt.ylabel('Slope Difference')
+    plt.title('Slope Difference')
+    
+    dir_name = "/Users/sepa/Desktop/60GHzレーダーの実験/Euclidean_Distance/実験結果/"
+    now = datetime.datetime.fromtimestamp(time.time())
+    file_name = dir_name + now.strftime("%Y_%m_%d_%H_%M_%S") + ".png"
+    
+    plt.tight_layout()
+    plt.savefig(file_name)
+    # plt.show()
 
     print("Disconnecting...")
     # pg_process.close()
