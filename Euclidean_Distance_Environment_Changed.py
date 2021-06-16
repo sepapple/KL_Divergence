@@ -65,20 +65,7 @@ def main():
     b = np.ones(num)/num
     #事前に保存しておいたcsvファイル読み込み
     # df1 = pd.read_csv("test.csv",usecols=[1])
-    df1 = np.loadtxt('test.csv')
-    maxid = signal.argrelmax(df1,order=10)
-    print(maxid)
-    standard = max(df1)/2
-    target_peak = []
-    for i in maxid[0]:
-        if(standard < df1[i]):
-            target_peak.append(i)
-    
-    print(target_peak)
-    plt.plot(range(0,len(df1)),df1)
-    plt.show()
-    exit(1)
-    # df2 = np.zeros(len(df1))
+
 
     interrupt_handler = et.utils.ExampleInterruptHandler()
     print("Press Ctrl-C to end session")
@@ -92,26 +79,45 @@ def main():
         if(counter > sample):
             df2 = df2/sample
             break
+    
+    #ダンボールと商品のピーク値を検出
+    df1 = np.loadtxt('test.csv')
+    df1_maxid = signal.argrelmax(df1,order=10)
+    standard = max(df1)/2
+    df1_target_peak = []
+    for i in df1_maxid[0]:
+        if(standard < df1[i]):
+            df1_target_peak.append(i)
 
+    df2_maxid = signal.argrelmax(df2,order=10)
+    print(df2_maxid)
+    standard = max(df1)/2
+    df2_target_peak = []
+    for i in df2_maxid[0]:
+        if(standard < df2[i]):
+            df2_target_peak.append(i)
+
+    # print(df2_target_peak)
+    # plt.plot(range(0,len(df2)),df2)
+    # plt.show()
+    # exit(1)
+    
     #データ保存部
-    max_val = df2[np.argmax(df2)]
-    min_val = df2[np.argmin(df2)]
-    print(max_val)
-    print(min_val)
-    print((max_val+min_val)/2)
-    np.savetxt('test.csv',df2)
-    exit(1)
+    # np.savetxt('test.csv',df2)
+    # exit(1)
     # print((int(range_end*100) - int(range_start*100))/len(df1))
 
     # print(df2)
     # print(np.argmax(df2))
     # print(df2[np.argmax(df2)])
+    
+
 
     #以前のデータから最大値の山の抽出範囲検索
-    df1_max_order = np.argmax(df1)
-    df1_max_value = df1[np.argmax(df1)]
-
+    df1_max_order = df1_target_peak[1]
+    df1_max_value = df1[df1_target_peak[1]]
     df1_start_loc = df1_max_order-1
+
     while(df1_start_loc > 0):
         if(df1[df1_start_loc] <= df1[df1_start_loc-1]):
             break
@@ -124,8 +130,8 @@ def main():
         df1_finish_loc = df1_finish_loc+1
     
     #現在のデータから最大値の山の抽出範囲検索
-    df2_max_order = np.argmax(df2)
-    df2_max_value = df2[np.argmax(df2)]
+    df2_max_order = df2_target_peak[1]
+    df2_max_value = df2[df2_target_peak[1]]
     df2_start_loc = df2_max_order-1
 
     while(df2_start_loc > 0):

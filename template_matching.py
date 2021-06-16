@@ -1,5 +1,6 @@
 import acconeer.exptool as et
 import csv
+import cv2
 
 #データ取り扱い
 import pandas as pd
@@ -65,20 +66,29 @@ def main():
     b = np.ones(num)/num
     #事前に保存しておいたcsvファイル読み込み
     # df1 = pd.read_csv("test.csv",usecols=[1])
-    df1 = np.loadtxt('test.csv')
-    maxid = signal.argrelmax(df1,order=10)
-    print(maxid)
-    standard = max(df1)/2
-    target_peak = []
-    for i in maxid[0]:
-        if(standard < df1[i]):
-            target_peak.append(i)
+
+    img1 = cv2.imread('/Users/sepa/Desktop/60GHzレーダーの実験/Euclidean_Distance/template/previous_template.png')
+    img2 = cv2.imread('/Users/sepa/Desktop/60GHzレーダーの実験/Euclidean_Distance/template/current_template.png')
+
+    img1 = img1.astype(np.float32)
+    img2 = img2.astype(np.float32)
+ 
+    # ウィンドウサイズを設定
+    wsize = 300
     
-    print(target_peak)
-    plt.plot(range(0,len(df1)),df1)
-    plt.show()
-    exit(1)
-    # df2 = np.zeros(len(df1))
+    # 1枚目の画像の(100,100)座標からwsize分の画像を抽出しテンプレート画像とする
+    template = img1[100:100+wsize, 100:100+wsize]
+    
+    # テンプレートマッチング
+    method = cv2.TM_CCOEFF_NORMED                               # Normalized Cross Correlation (NCC) 正規化相互相関係数
+    
+    res = cv2.matchTemplate(img2,template,method)               # テンプレートマッチングの結果
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)     # 最小値と最大値、その位置を取得
+    
+    print(max_val, max_loc)
+    eixt(1)
+
+
 
     interrupt_handler = et.utils.ExampleInterruptHandler()
     print("Press Ctrl-C to end session")
@@ -92,26 +102,45 @@ def main():
         if(counter > sample):
             df2 = df2/sample
             break
+    
+    #ダンボールと商品のピーク値を検出
+    df1 = np.loadtxt('test.csv')
+    df1_maxid = signal.argrelmax(df1,order=10)
+    standard = max(df1)/2
+    df1_target_peak = []
+    for i in df1_maxid[0]:
+        if(standard < df1[i]):
+            df1_target_peak.append(i)
 
+    df2_maxid = signal.argrelmax(df2,order=10)
+    print(df2_maxid)
+    standard = max(df1)/2
+    df2_target_peak = []
+    for i in df2_maxid[0]:
+        if(standard < df2[i]):
+            df2_target_peak.append(i)
+
+    # print(df2_target_peak)
+    # plt.plot(range(0,len(df2)),df2)
+    # plt.show()
+    # exit(1)
+    
     #データ保存部
-    max_val = df2[np.argmax(df2)]
-    min_val = df2[np.argmin(df2)]
-    print(max_val)
-    print(min_val)
-    print((max_val+min_val)/2)
-    np.savetxt('test.csv',df2)
-    exit(1)
+    # np.savetxt('test.csv',df2)
+    # exit(1)
     # print((int(range_end*100) - int(range_start*100))/len(df1))
 
     # print(df2)
     # print(np.argmax(df2))
     # print(df2[np.argmax(df2)])
+    
+
 
     #以前のデータから最大値の山の抽出範囲検索
-    df1_max_order = np.argmax(df1)
-    df1_max_value = df1[np.argmax(df1)]
-
+    df1_max_order = df1_target_peak[1]
+    df1_max_value = df1[df1_target_peak[1]]
     df1_start_loc = df1_max_order-1
+
     while(df1_start_loc > 0):
         if(df1[df1_start_loc] <= df1[df1_start_loc-1]):
             break
@@ -124,8 +153,8 @@ def main():
         df1_finish_loc = df1_finish_loc+1
     
     #現在のデータから最大値の山の抽出範囲検索
-    df2_max_order = np.argmax(df2)
-    df2_max_value = df2[np.argmax(df2)]
+    df2_max_order = df2_target_peak[1]
+    df2_max_value = df2[df2_target_peak[1]]
     df2_start_loc = df2_max_order-1
 
     while(df2_start_loc > 0):
@@ -168,67 +197,17 @@ def main():
     #ピーク位置調整後
     # ax = plt.subplot(1,2,1)
     # ax = plt.subplot(1,3,1)
-    ax = plt.subplot(2,2,1)
 
-    plt.plot(range(0,len(df1_copy)),df1_copy,label='Previous',color='b')  
+    # plt.plot(range(0,len(df2_copy)),df1_copy,label='Previous',color='b')  
     plt.plot(range(0,len(df2_copy)),df2_copy,label='Current',color='r')  
 
-    plt.xlabel('Data Number')
-    plt.ylabel('Amplitude')
-    plt.title('After Adjustment of Peak Position')
-    plt.legend(loc='best')
-
-    #ユークリッド距離,コサイン類似度の算出
-    euclidean_distance = Euclidean_Distance(df1_copy,df2_copy)
-    cosine_similarity = Cosine_Similarity(df1_copy,df2_copy)
-    point_distance = np.sqrt((df1_copy-df2_copy)**2)
-    peak_point = np.argmax(df1_copy)
-
-    print("各点におけるユークリッド距離の総和: "+str(euclidean_distance))
-    # print("コサイン類似度: "+str(cosine_similarity))
-    print("ピーク地点におけるユークリッド距離: "+str(np.sqrt((df1_copy[peak_point]-df2_copy[peak_point])**2)))
-    # print("点ごとの距離: "+str(point_distance))
-
-
-    # ax = plt.subplot(1,2,2)
-    # ax = plt.subplot(1,3,2)
-    ax = plt.subplot(2,2,2)
-    value = np.sqrt(np.square(df1_copy-df2_copy))
-
-    plt.plot(range(0,len(value)),value,label='Euclidean_Distance',color='r')  
-
-    plt.xlabel('Data Number')
-    plt.ylabel('Euclidean Distance')
-    plt.title('Euclidean Distance')
+    # plt.xlabel('Data Number')
+    # plt.ylabel('Amplitude')
+    # plt.title('After Adjustment of Peak Position')
     
-    df1_slope = []
-    df2_slope = []
-    for i in range(len(df1_copy)-1):
-        df1_slope.append(df1_copy[i+1]-df1_copy[i])
-        df2_slope.append(df2_copy[i+1]-df2_copy[i])
-
-    # ax = plt.subplot(1,3,3)
-    ax = plt.subplot(2,2,3)
-    plt.plot(range(0,len(df1_slope)),df1_slope,label='Previous',color='b')  
-    plt.plot(range(0,len(df2_slope)),df2_slope,label='Current',color='r')  
-
-    plt.xlabel('Data Number')
-    plt.ylabel('Slope')
-    plt.legend()
-    plt.title('Slope')
-
-    ax = plt.subplot(2,2,4)
-    slope_diff = np.sqrt(np.square(np.array(df1_slope)-np.array(df2_slope)))
-    plt.plot(range(0,len(slope_diff)),slope_diff,label='Previous',color='b')  
-    print("傾きの差のユークリッド距離: "+str(slope_diff[np.argmax(slope_diff)]))
-
-    plt.xlabel('Data Number')
-    plt.ylabel('Slope Difference')
-    plt.title('Slope Difference')
-    
-    dir_name = "/Users/sepa/Desktop/60GHzレーダーの実験/Euclidean_Distance/実験環境変更/空箱同士"
-    now = datetime.datetime.fromtimestamp(time.time())
-    file_name = dir_name + now.strftime("%Y_%m_%d_%H_%M_%S") + ".png"
+    dir_name = "/Users/sepa/Desktop/60GHzレーダーの実験/Euclidean_Distance/template/"
+    # now = datetime.datetime.fromtimestamp(time.time())
+    file_name = dir_name + "currrent_template.png"
     
     plt.tight_layout()
     plt.savefig(file_name)
