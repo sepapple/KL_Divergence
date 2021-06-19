@@ -37,7 +37,7 @@ def main():
     
     sensor_config = et.EnvelopeServiceConfig()
     sensor_config.sensor = args.sensors
-    range_start = 0.2
+    range_start = 0.4
     range_end = 1.0
     sensor_config.range_interval = [range_start, range_end]
     sensor_config.profile = sensor_config.Profile.PROFILE_2
@@ -232,7 +232,8 @@ def main():
     plt.ylabel('Slope Difference')
     plt.title('Slope Difference')
     
-    dir_name = "/Users/sepa/Desktop/60GHzレーダーの実験/Euclidean_Distance/実験環境変更/空箱同士"
+    # dir_name = "/Users/sepa/Desktop/60GHzレーダーの実験/Euclidean_Distance/実験環境変更/空箱同士/"
+    dir_name = "/Users/sepa/Desktop/"
     now = datetime.datetime.fromtimestamp(time.time())
     file_name = dir_name + now.strftime("%Y_%m_%d_%H_%M_%S") + ".png"
     
