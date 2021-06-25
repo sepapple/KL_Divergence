@@ -1,7 +1,8 @@
 import acconeer.exptool as et
 import csv
-import os
 import cv2
+import os
+import itertools
 
 #データ取り扱い
 import pandas as pd
@@ -16,37 +17,84 @@ from scipy import signal
 import matplotlib
 import matplotlib.pyplot as plt
 
-def Euclidean_Distance(x,y):
-    return np.sqrt(np.sum((x-y)**2))
-
-def Cosine_Similarity(x,y):
-    return np.dot(x,y)/(np.sqrt(np.dot(x,x))* np.sqrt(np.dot(y,y)))
-
-
 def main():
+    #グラフ全体を切り抜く設定
+    beneath_height = 55
+    top_height = 70
+    left_width = 80
+    right_width = 65
 
-    img1 = cv2.imread('/Users/sepa/Desktop/test/template/current_template_original.png',0)
-    img2 = cv2.imread('/Users/sepa/Desktop/test/template/previous_template_original.png',0)
-    # img1 = cv2.imread('/Users/sepa/Desktop/test/template/test.png',0)
-    # img2 = cv2.imread('/Users/sepa/Desktop/test/template/test1.png',0)
-    # img2 = cv2.imread('/Users/sepa/Desktop/test/template/test.png',0)
-    # img2 = cv2.imread('/Users/sepa/Desktop/60GHzレーダーの実験/Euclidean_Distance/template/current_template.png',0)
-    # print(img1)
-    # exit(1)
- 
-    # ウィンドウサイズを設定
-    # 1枚目の画像の(100,100)座標からwsize分の画像を抽出しテンプレート画像とする
-    # wsize = 300
-    # template = img1[100:100+wsize, 100:100+wsize]
+    #特徴量の部分を切り抜く設定
+    beneath_height = 55
+    top_height = 70
+    left_width = 210
+    right_width = 100
     
+    methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR','cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
     
-    # テンプレートマッチング
-    method = cv2.TM_CCOEFF_NORMED                               # Normalized Cross Correlation (NCC) 正規化相互相関係数
+    #特定のセンサデータをプロット
+    dir_name = '/Users/sepa/Desktop/template/experiment/'
     
-    res = cv2.matchTemplate(img1,img2,method)               # テンプレートマッチングの結果
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)     # 最小値と最大値、その位置を取得
+    targets = [target_dir for target_dir in os.listdir(dir_name) if not target_dir.startswith('.')]
+    dir_paths = [dir_name+target+'/' for target in targets]
+    file_paths = []
+    for dir_path in dir_paths:
+        temp=[]
+        for filename in os.listdir(dir_path):
+            temp.append(dir_path+filename)
+        file_paths.append(temp)
     
-    print(max_val, max_loc)
+    for i in file_paths[0]:
+        for j in file_paths[1]:
+            target1 = i.split('/')
+            target2 = j.split('/')
+            print(str(target1[-2])+'/'+str(target1[-1])+' : '+str(target2[-2])+'/'+str(target2[-1]))
+            img1 = cv2.imread(i,0)
+            img2 = cv2.imread(j,0)
+            for meth in methods:
+                # method = eval(meth)
+                # res = cv2.matchTemplate(img1[top_height:-beneath_height,left_width:-right_width],img2[top_height:-beneath_height,left_width:-right_width],method)               
+                # min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res) 
+                # print(str(meth)+'を用いた類似度: '+str(max_val))
+                print(str(meth)+'を用いた類似度: ')
+
+
+    # for i in range(len(file_paths)):
+    #     for 
+    exit(1)
+    # for i in range()
+    # filenames = []
+    # filenames.append(filename_1)
+    # filenames.append(filename_2)
+    # filenames.append(filename_3)
+    # 
+    # for filename in filenames:
+    #     df = np.loadtxt(filename+'.csv')
+    #     plt.plot(range(len(df)),df,color='b')  
+    #     plt.savefig(filename)
+    #     plt.cla()
+    
+
+
+    img1 = cv2.imread(filename_1+'.png',0)
+    img2 = cv2.imread(filename_2+'.png',0)
+
+    #表示方法(ESCでウィンドウを閉じる)
+    # cv2.imshow('image',img1[top_height:-beneath_height,left_width:-right_width])
+    # cv2.waitKey(0)
+
+    #テンプレートマッチング
+    for meth in methods:
+        method = eval(meth)
+        res = cv2.matchTemplate(img1[top_height:-beneath_height,left_width:-right_width],img2[top_height:-beneath_height,left_width:-right_width],method)               
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res) 
+        print(str(meth)+'を用いた類似度: '+str(max_val))
+
+    #保存
+    # cv2.imwrite(filename_1+'_Allextraction.png',img1[top_height:-beneath_height,left_width:-right_width])
+    # cv2.imwrite(filename_2+'_Allextraction.png',img2[top_height:-beneath_height,left_width:-right_width])
+    # cv2.imwrite(filename_1+'_Featureextraction.png',img1[top_height:-beneath_height,left_width:-right_width])
+    # cv2.imwrite(filename_2+'_Featureextraction.png',img2[top_height:-beneath_height,left_width:-right_width])
 
 
 if __name__ == "__main__":

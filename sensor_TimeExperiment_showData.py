@@ -18,8 +18,11 @@ def main():
     range_start = 0.4
     range_end = 1.0
     colors = ['r','g','b','m','c']
-    labels = ['Initial','After 5min','After 10min','After 30minm','After 60min']
-    dir_name = "/Users/sepa/Desktop/センサーの実験/test/"
+    labels = ['Initial','After 5min','After 10min','After 30min','After 60min']
+    # dir_name = "/Users/sepa/Desktop/センサーの実験/second/empty/"
+    dir_name = "/Users/sepa/Desktop/センサーの実験/second/book1/"
+    # dir_name = "/Users/sepa/Desktop/センサーの実験/book1/"
+    # dir_name = "/Users/sepa/Desktop/センサーの実験/book2/"
     files = os.listdir(dir_name)
     files_path = [dir_name + file for file in files ]
     
@@ -33,9 +36,11 @@ def main():
     plt.ylabel('Amplitude')
     plt.title('Sensor Value')
     plt.legend(loc='best')
-
     plt.tight_layout()
-    plt.show()
+    plt.savefig(dir_name+'result')
+
+    # plt.show()
+
 
 if __name__ == "__main__":
     main()
