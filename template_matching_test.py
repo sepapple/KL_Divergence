@@ -1,6 +1,7 @@
 import acconeer.exptool as et
 import csv
 import cv2
+import os
 
 #データ取り扱い
 import pandas as pd
@@ -25,13 +26,13 @@ def Cosine_Similarity(x,y):
 def main():
     
     #特定のセンサデータをプロット
-    # dic_name = '/Users/sepa/Desktop/template/compate/'
-    filename_1 = '/Users/sepa/Desktop/template/compare/' + 'empty'
-    filename_2 = '/Users/sepa/Desktop/template/compare/' + 'book1'
-    filename_3 = '/Users/sepa/Desktop/template/compare/' + 'book2'
+    dir_name = '/Users/sepa/Desktop/template/experiment/empty/'
+    # filename_1 = '/Users/sepa/Desktop/template/compare/' + 'empty'
+    # filename_2 = '/Users/sepa/Desktop/template/compare/' + 'book1'
+    # filename_3 = '/Users/sepa/Desktop/template/compare/' + 'book2'
 
     files = os.listdir(dir_name)
-    files_path = [dir_name + file for file in files ]
+    files_paths = [dir_name + file for file in files ]
     # filenames = []
     # filenames.append(filename_1)
     # filenames.append(filename_2)
@@ -44,25 +45,31 @@ def main():
     #     plt.cla()
     
 
-
-    img1 = cv2.imread(filename_1+'.png',0)
-    img2 = cv2.imread(filename_2+'.png',0)
     #グラフ全体を切り抜く設定
-    beneath_height = 55
-    top_height = 70
-    left_width = 80
-    right_width = 65
+    # beneath_height = 55
+    # top_height = 70
+    # left_width = 80
+    # right_width = 65
+
+    #特徴量の部分を切り抜く設定
+    # beneath_height = 55
+    # top_height = 70
+    # left_width = 210
+    # right_width = 100
 
     #特徴量の部分を切り抜く設定
     beneath_height = 55
     top_height = 70
-    left_width = 210
+    left_width = 375
     right_width = 100
 
     #表示方法(ESCでウィンドウを閉じる)
-    # cv2.imshow('image',img1[top_height:-beneath_height,left_width:-right_width])
-    # cv2.waitKey(0)
-
+    for file in files_paths:
+        img1 = cv2.imread(file,0)
+        cv2.imshow('image',img1[top_height:-beneath_height,left_width:-right_width])
+        cv2.waitKey(0)
+    
+    exit(1)
     #テンプレートマッチング
     methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR','cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
     for meth in methods:
