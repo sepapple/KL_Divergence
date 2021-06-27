@@ -22,7 +22,8 @@ def main():
     # dir_name = "/Users/sepa/Desktop/センサーの実験/second/empty/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/second/book1/second/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/second/book2/first/"
-    dir_name = "/Users/sepa/Desktop/センサーの実験/second/empty/second/"
+    # dir_name = "/Users/sepa/Desktop/センサーの実験/second/empty/second/"
+    dir_name = "/Users/sepa/Desktop/センサーの実験/second/book2/second/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/book1/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/book2/"
     files = os.listdir(dir_name)

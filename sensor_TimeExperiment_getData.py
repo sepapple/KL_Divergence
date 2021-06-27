@@ -77,7 +77,7 @@ def main():
     print(after_time-before_time)
     #データ保存部
     # dir_name = "/Users/sepa/Desktop/センサーの実験/book1/"
-    dir_name = "/Users/sepa/Desktop/センサーの実験/second/book1/second/"
+    dir_name = "/Users/sepa/Desktop/センサーの実験/second/book2/second/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/test/"
     now = datetime.datetime.fromtimestamp(time.time())
     file_name = dir_name + now.strftime("%Y_%m_%d_%H_%M_%S") + ".csv"

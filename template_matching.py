@@ -27,6 +27,12 @@ def main():
     left_width = 80
     right_width = 65
 
+    #グラフ全体を切り抜く設定
+    feature_beneath_height = 55
+    feature_top_height = 70
+    feature_left_width = 80
+    feature_right_width = 65
+
     #特徴量全体を切り抜く設定
     # feature_beneath_height = 55
     # feature_top_height = 70
@@ -34,10 +40,10 @@ def main():
     # feature_right_width = 100
 
     #商品の特徴量を切り抜く設定
-    feature_beneath_height = 55
-    feature_top_height = 70
-    feature_left_width = 375
-    feature_right_width = 100
+    # feature_beneath_height = 55
+    # feature_top_height = 70
+    # feature_left_width = 375
+    # feature_right_width = 100
 
     #csv出力のための準備
     methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR','cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
@@ -70,13 +76,14 @@ def main():
     
     '''
     #同じ条件でテンプレートマッチング(file_pathsの番号を変えることで入力データを変更可能 0:empty,1:bok1,2:book2)
-    for comb in itertools.combinations(file_paths[0],2):
+    for comb in itertools.combinations(file_paths[2],2):
         target1 = comb[0].split('/')
         target2 = comb[1].split('/')
         print(str(target1[-2])+'/'+str(target1[-1])+' : '+str(target2[-2])+'/'+str(target2[-1]))
         header.append(str(target1[-2])+'/'+str(target1[-1])+' : '+str(target2[-2])+'/'+str(target2[-1]))
         img1 = cv2.imread(comb[0],0)
         img2 = cv2.imread(comb[1],0)
+        # cv2.imshow('image',img1[top_height:-beneath_height,left_width:-right_width])
         # cv2.imshow('image',img1[top_height:-beneath_height,left_width:-right_width])
 
         for meth in methods:
@@ -104,10 +111,12 @@ def main():
                 print(str(meth)+': '+str(max_val))
 
     df = pd.DataFrame([ccoeff,ccoeff_normed,ccorr,ccorr_normed,sqdiff,sqdiff_normed],columns=header)
-    df.to_csv("/Users/sepa/Desktop/template/experiment/result/empty_template_matching.csv",index=False)
-    # df.to_csv("/Users/sepa/Desktop/template/experiment/result/book1_template_matching.csv",index=False)
-    # df.to_csv("/Users/sepa/Desktop/template/experiment/result/book2_template_matching.csv",index=False)
+    # df.to_csv("/Users/sepa/Desktop/template/experiment/result/graph_extract/empty_template_matching.csv",index=False)
+    # df.to_csv("/Users/sepa/Desktop/template/experiment/result/graph_extract/book1_template_matching.csv",index=False)
+    df.to_csv("/Users/sepa/Desktop/template/experiment/result/graph_extract/book2_template_matching.csv",index=False)
+    exit(1)
     '''
+
     header = []
     ccoeff = []
     ccoeff_normed = []
@@ -160,9 +169,9 @@ def main():
                     print(str(meth)+': '+str(max_val))
 
     df = pd.DataFrame([ccoeff,ccoeff_normed,ccorr,ccorr_normed,sqdiff,sqdiff_normed],columns=header)
-    # df.to_csv("/Users/sepa/Desktop/template/experiment/result/empty_book1_template_matching.csv",index=False)
-    # df.to_csv("/Users/sepa/Desktop/template/experiment/result/empty_book2_template_matching.csv",index=False)
-    df.to_csv("/Users/sepa/Desktop/template/experiment/result/book1_book2_template_matching.csv",index=False)
+    # df.to_csv("/Users/sepa/Desktop/template/experiment/result/graph_extract/empty_book1_template_matching.csv",index=False)
+    # df.to_csv("/Users/sepa/Desktop/template/experiment/result/graph_extract/empty_book2_template_matching.csv",index=False)
+    df.to_csv("/Users/sepa/Desktop/template/experiment/result/graph_extract/book1_book2_template_matching.csv",index=False)
 
     #保存
     # cv2.imwrite(filename_1+'_Allextraction.png',img1[top_height:-beneath_height,left_width:-right_width])
