@@ -20,12 +20,13 @@ def main():
     colors = ['r','g','b','m','c']
     labels = ['Initial','After 5min','After 10min','After 30min','After 60min']
     # dir_name = "/Users/sepa/Desktop/センサーの実験/second/empty/"
-    dir_name = "/Users/sepa/Desktop/センサーの実験/second/book1/first/"
+    # dir_name = "/Users/sepa/Desktop/センサーの実験/second/book1/second/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/second/book2/first/"
+    dir_name = "/Users/sepa/Desktop/センサーの実験/second/empty/second/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/book1/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/book2/"
     files = os.listdir(dir_name)
-    files_path = [dir_name + file for file in files if not file.startswith('.')]
+    files_path = [dir_name + file for file in files if not file.startswith('.') and not 'png' in file]
     
     df = np.loadtxt(files_path[0])
     x = np.arange(range_start*100,range_end*100,(int(range_end*100) - int(range_start*100))/len(df))
