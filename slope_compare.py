@@ -15,7 +15,10 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 def Euclidean_Distance(x,y):
-    return np.sqrt(np.sum((x-y)**2))
+    if(len(x)>len(y)):
+        return (np.sqrt(np.sum((x[:len(y)]-y[:len(y)])**2)))/len(y)
+    else:
+        return (np.sqrt(np.sum((x[:len(x)]-y[:len(x)])**2)))/len(x)
 
 def Cosine_Similarity(x,y):
     return np.dot(x,y)/(np.sqrt(np.dot(x,x))* np.sqrt(np.dot(y,y)))
@@ -108,13 +111,21 @@ def main():
     df2_copy = np.copy(df2[df2_target_peak[0]-start_offset:df2_target_peak[-1]+finish_offset])
     # df1_copy = np.delete(df1_copy,np.s_[df1_max_order-start_offset:df1_max_order+finish_offset])
     # df2_copy = np.delete(df2_copy,np.s_[df2_max_order-start_offset:df2_max_order+finish_offset])
+    result = Euclidean_Distance(df1_copy,df2_copy)
     
-    df1_copy_slope = np.diff(a=df1_copy,n=1)
-    df2_copy_slope = np.diff(a=df2_copy,n=1)
+    # df1_copy_slope = np.diff(a=df1_copy,n=1)
+    # df2_copy_slope = np.diff(a=df2_copy,n=1)
+    df1_copy_slope = np.gradient(df1_copy)
+    df2_copy_slope = np.gradient(df2_copy)
     # print(df1_copy_slope)
-    ax = plt.subplot(1,1,1)
+    ax = plt.subplot(1,2,1)
+    plt.plot(range(len(df1_copy)),df1_copy,color='r')
+    plt.plot(range(len(df2_copy)),df2_copy,color='b')
+    plt.title("Original Data")
+    ax = plt.subplot(1,2,2)
     plt.plot(range(len(df1_copy_slope)),df1_copy_slope,color='r')
     plt.plot(range(len(df2_copy_slope)),df2_copy_slope,color='b')
+    plt.title("Slope Value: %2.5f" %result)
     plt.show()
     exit(1)
 

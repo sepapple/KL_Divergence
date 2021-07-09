@@ -24,13 +24,13 @@ def main():
     #グラフ全体を切り抜く設定
     beneath_height = 55
     top_height = 70
-    left_width = 80
+    left_width = 90
     right_width = 65
 
     #グラフ全体を切り抜く設定
     feature_beneath_height = 55
     feature_top_height = 70
-    feature_left_width = 80
+    feature_left_width = 90
     feature_right_width = 65
 
     #特徴量全体を切り抜く設定

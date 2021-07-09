@@ -91,7 +91,7 @@ def main():
 
     df2_maxid = signal.argrelmax(df2,order=10)
     print(df2_maxid)
-    standard = max(df1)/2
+    standard = max(df2)/2
     df2_target_peak = []
     for i in df2_maxid[0]:
         if(standard < df2[i]):

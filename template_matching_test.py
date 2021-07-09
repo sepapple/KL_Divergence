@@ -31,41 +31,35 @@ def main():
     # filename_2 = '/Users/sepa/Desktop/template/compare/' + 'book1'
     # filename_3 = '/Users/sepa/Desktop/template/compare/' + 'book2'
 
-    files = os.listdir(dir_name)
-    files_paths = [dir_name + file for file in files ]
-    # filenames = []
-    # filenames.append(filename_1)
-    # filenames.append(filename_2)
-    # filenames.append(filename_3)
-    # 
-    # for filename in filenames:
-    #     df = np.loadtxt(filename+'.csv')
-    #     plt.plot(range(len(df)),df,color='b')  
-    #     plt.savefig(filename)
-    #     plt.cla()
-    
-
     #グラフ全体を切り抜く設定
-    # beneath_height = 55
-    # top_height = 70
-    # left_width = 80
-    # right_width = 65
-
-    #特徴量の部分を切り抜く設定
-    # beneath_height = 55
-    # top_height = 70
-    # left_width = 210
-    # right_width = 100
-
-    #特徴量の部分を切り抜く設定
     beneath_height = 55
     top_height = 70
-    left_width = 375
-    right_width = 100
+    left_width = 90
+    right_width = 65
+
+
+    #特徴量全体を切り抜く設定
+    feature_beneath_height = 55
+    feature_top_height = 70
+    feature_left_width = 210
+    feature_right_width = 100
+
+    #商品の特徴量を切り抜く設定
+    product_feature_beneath_height = 55
+    product_feature_top_height = 70
+    product_feature_left_width = 375
+    product_feature_right_width = 100
+
+    files = os.listdir(dir_name)
+    files_paths = [dir_name + file for file in files if(not file.startswith('.') and not 'csv' in file and not 'result' in file)]
 
     #表示方法(ESCでウィンドウを閉じる)
     for file in files_paths:
         img1 = cv2.imread(file,0)
+        cv2.imwrite(dir_name+'GraphExtraction.png',img1[top_height:-beneath_height,left_width:-right_width])
+        cv2.imwrite(dir_name+'AllFeatureExtraction.png',img1[feature_top_height:-feature_beneath_height,feature_left_width:-feature_right_width])
+        cv2.imwrite(dir_name+'ProductFeatureExtraction.png',img1[product_feature_top_height:-product_feature_beneath_height,product_feature_left_width:-product_feature_right_width])
+        exit(1)
         cv2.imshow('image',img1[top_height:-beneath_height,left_width:-right_width])
         cv2.waitKey(0)
     
