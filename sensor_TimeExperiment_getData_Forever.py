@@ -52,8 +52,7 @@ def main():
     num = 500
 
     #取得するセンサデータの個数とカウンター
-    sample = 2000
-    # sample = 3250
+    sample = 3250
     counter = 0
     b = np.ones(num)/num
     #事前に保存しておいたcsvファイル読み込み
@@ -63,30 +62,32 @@ def main():
 
     interrupt_handler = et.utils.ExampleInterruptHandler()
     print("Press Ctrl-C to end session")
-    before_time = time.time()
-    while not interrupt_handler.got_signal:
-        data_info, data = client.get_next()
-        if(counter == 0):
-            df2 = data[0]
-        else:
-            df2 = df2 + data[0]
-        counter += 1
-        if(counter > sample):
-            df2 = df2/sample
-            break
-    after_time = time.time()
-    print(after_time-before_time)
-    #データ保存部
-    # dir_name = "/Users/sepa/Desktop/センサーの実験/book1/"
-    # dir_name = "/Users/sepa/Desktop/センサーの実験/second/book2/second/"
-    # dir_name = "/Users/sepa/Desktop/センサーの実験/shift_cardboard/空箱/"
-    # dir_name = "/Users/sepa/Desktop/センサーの実験/shift_cardboard/本2冊/"
-    # dir_name = "/Users/sepa/Desktop/センサーの実験/change_angle/本1冊/"
-    dir_name = "/Users/sepa/Desktop/センサーの実験/change_angle/空箱/"
-    # dir_name = "/Users/sepa/Desktop/センサーの実験/test/"
-    now = datetime.datetime.fromtimestamp(time.time())
-    file_name = dir_name + now.strftime("%Y_%m_%d_%H_%M_%S") + ".csv"
-    np.savetxt(file_name,df2)
+    # before_time = time.time()
+
+    while(1):
+        while not interrupt_handler.got_signal:
+            data_info, data = client.get_next()
+            if(counter == 0):
+                df2 = data[0]
+            else:
+                df2 = df2 + data[0]
+            counter += 1
+            if(counter > sample):
+                df2 = df2/sample
+                break
+            # after_time = time.time()
+            # print(after_time-before_time)
+            #データ保存部
+            # dir_name = "/Users/sepa/Desktop/センサーの実験/book1/"
+        dir_name = "/Users/sepa/Desktop/センサーの実験/forever/"
+        # dir_name = "/Users/sepa/Desktop/センサーの実験/test/"
+        now = datetime.datetime.fromtimestamp(time.time())
+        file_name = dir_name + now.strftime("%Y_%m_%d_%H_%M_%S") + ".csv"
+        print(file_name)
+        np.savetxt(file_name,df2)
+        time.sleep(3600)
+        counter = 0
+        
 
     print("Disconnecting...")
     # pg_process.close()

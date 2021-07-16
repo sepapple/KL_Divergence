@@ -33,16 +33,16 @@ def main():
     x = np.arange(range_start*100,range_end*100,(int(range_end*100) - int(range_start*100))/len(df))
     for i,file_path in enumerate(files_path):
         df = np.loadtxt(file_path)
-        plt.plot(x,df,color=colors[i],label= labels[i])
+        # plt.plot(x,df,color=colors[i],label= labels[i])
+        plt.plot(x,df)
 
     plt.xlabel('Distance(cm)')
     plt.ylabel('Amplitude')
     plt.title('Sensor Value')
-    plt.legend(loc='best')
     plt.tight_layout()
     plt.savefig(dir_name+'result')
 
-    # plt.show()
+    plt.show()
 
 
 if __name__ == "__main__":
