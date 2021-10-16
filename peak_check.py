@@ -28,7 +28,7 @@ def main():
     range_end = 1.0
     
     #ファイルのディレクトリ
-    file_dir = '/Users/sepa/Desktop/センサーの実験/first/empty/'
+    # file_dir = '/Users/sepa/Desktop/センサーの実験/first/empty/'
     # file_dir = '/Users/sepa/Desktop/センサーの実験/second/empty/first/'
     # file_dir = '/Users/sepa/Desktop/センサーの実験/second/empty/second/'
     # file_dir = '/Users/sepa/Desktop/センサーの実験/first/book1/'
@@ -38,6 +38,14 @@ def main():
     # file_dir = '/Users/sepa/Desktop/センサーの実験/second/book2/first/'
     # file_dir = '/Users/sepa/Desktop/センサーの実験/second/book2/second/'
 
+    # file_dir = '/Users/sepa/Desktop/センサーの実験/shift_cardboard/空箱/'
+    # file_dir = '/Users/sepa/Desktop/センサーの実験/shift_cardboard/本1冊/'
+    # file_dir = '/Users/sepa/Desktop/センサーの実験/shift_cardboard/本2冊/'
+
+    # file_dir = '/Users/sepa/Desktop/センサーの実験/change_angle/空箱/'
+    # file_dir = '/Users/sepa/Desktop/センサーの実験/change_angle/本1冊/'
+    file_dir = '/Users/sepa/Desktop/センサーの実験/change_angle/本2冊/'
+    
     
     #データ読み込み
     header = []
@@ -54,6 +62,8 @@ def main():
     #違うデータでの比較
     df1_files = [file_name for file_name in os.listdir(file_dir) if not file_name.startswith('.') and 'csv' in file_name]
     # df2_files = [file_name for file_name in os.listdir(df2_file_dir) if not file_name.startswith('.') and 'csv' in file_name]
+    df1_files = sorted(df1_files)
+    
     for file in df1_files:
         df1_target_peak = []
         df1_path = file_dir + file

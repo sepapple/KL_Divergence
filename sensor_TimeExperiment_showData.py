@@ -23,7 +23,10 @@ def main():
     # dir_name = "/Users/sepa/Desktop/センサーの実験/second/book1/second/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/second/book2/first/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/second/empty/second/"
-    dir_name = "/Users/sepa/Desktop/センサーの実験/forever/"
+    # dir_name = "/Users/sepa/Desktop/センサーの実験/forever/"
+    # dir_name = "/Users/sepa/Desktop/センサーの実験/共同研究/empty/"
+    # dir_name = "/Users/sepa/Desktop/センサーの実験/共同研究/book1/"
+    dir_name = "/Users/sepa/Desktop/センサーの実験/共同研究/book2/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/book1/"
     # dir_name = "/Users/sepa/Desktop/センサーの実験/book2/"
     files = os.listdir(dir_name)
@@ -38,7 +41,7 @@ def main():
     plt.xlabel('Distance(cm)')
     plt.ylabel('Amplitude')
     plt.title('Sensor Value')
-    plt.legend(loc='best')
+    # plt.legend(loc='best')
     plt.tight_layout()
     plt.savefig(dir_name+'result')
 
